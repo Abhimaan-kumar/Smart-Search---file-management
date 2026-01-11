@@ -6,9 +6,12 @@ REST API endpoints for content management, search, and folder operations.
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
+import os
 
 from core.content_manager import ContentManager
 from core.search_engine import SearchEngine
@@ -32,6 +35,35 @@ app.add_middleware(
 # Initialize content manager with search engine
 search_engine = SearchEngine(cache_capacity=100)
 content_manager = ContentManager(search_engine)
+
+# Serve static files (frontend)
+frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
+if os.path.exists(frontend_path):
+    # Serve CSS, JS, and other static files
+    app.mount("/static", StaticFiles(directory=frontend_path), name="static")
+    
+    @app.get("/", response_class=FileResponse)
+    async def serve_frontend():
+        """Serve the frontend index.html"""
+        index_path = os.path.join(frontend_path, "index.html")
+        if os.path.exists(index_path):
+            return FileResponse(index_path)
+        return {"message": "Frontend files not found"}
+    
+    # Serve CSS and JS files directly
+    @app.get("/style.css", response_class=FileResponse)
+    async def serve_css():
+        css_path = os.path.join(frontend_path, "style.css")
+        if os.path.exists(css_path):
+            return FileResponse(css_path, media_type="text/css")
+        raise HTTPException(status_code=404, detail="CSS file not found")
+    
+    @app.get("/app.js", response_class=FileResponse)
+    async def serve_js():
+        js_path = os.path.join(frontend_path, "app.js")
+        if os.path.exists(js_path):
+            return FileResponse(js_path, media_type="application/javascript")
+        raise HTTPException(status_code=404, detail="JS file not found")
 
 
 # Pydantic models for request/response
@@ -62,10 +94,10 @@ class AutocompleteRequest(BaseModel):
     limit: int = 10
 
 
-# Health check
-@app.get("/")
-async def root():
-    """Root endpoint"""
+# Health check (moved to /health since / serves frontend)
+@app.get("/api")
+async def api_root():
+    """API root endpoint"""
     return {
         "message": "Personal Smart Search & Organizer API",
         "version": "1.0.0",

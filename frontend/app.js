@@ -1,5 +1,16 @@
-// API Base URL
-const API_BASE = 'http://localhost:8000/api';
+// API Base URL - automatically detects environment
+const API_BASE = (() => {
+    // If running on Render or production, use relative path or environment variable
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        // Production: use the same host with /api prefix
+        // This assumes the frontend is served from the same domain as the API
+        // OR you can set a specific API URL via environment variable
+        const apiUrl = window.API_URL || `${window.location.protocol}//${window.location.host}/api`;
+        return apiUrl;
+    }
+    // Development: use localhost
+    return 'http://localhost:8000/api';
+})();
 
 // State
 let currentDocuments = [];
