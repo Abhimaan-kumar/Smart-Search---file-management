@@ -370,5 +370,8 @@ curl -X POST "http://localhost:8000/api/folders?path=/work/projects"
 ## 👨‍💻 Author
 
 Abhimaan Kumar
+https://github.com/Abhimaan-kumar
+
+## Open for collaboration in this project
 
 ---
