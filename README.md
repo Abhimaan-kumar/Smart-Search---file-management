@@ -325,7 +325,7 @@ curl -X POST "http://localhost:8000/api/folders?path=/work/projects"
 | Keyword Index | O(V + D) | V = vocabulary, D = documents |
 | Folder Tree | O(n) | n = number of folders |
 
-## 🎓 Interview-Ready Explanations
+## Explanations
 
 ### Why Trie for Autocomplete?
 
@@ -365,14 +365,13 @@ curl -X POST "http://localhost:8000/api/folders?path=/work/projects"
 - [ ] Search analytics
 - [ ] Export/import functionality
 
-## 📄 License
 
-This project is created for educational and interview preparation purposes.
 
 ## 👨‍💻 Author
 
-Built as a production-ready system demonstrating advanced Data Structures & Algorithms implementation, suitable for Microsoft SDE interview review.
+Abhimaan Kumar
+https://github.com/Abhimaan-kumar
+
+## Open for collaboration in this project
 
 ---
-
-**Note**: This system prioritizes software engineering quality, DSA correctness, and performance over UI polish. The code is structured for code review and technical interviews.
