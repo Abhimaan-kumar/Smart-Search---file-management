@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Smart Search & Organizer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>📚 Personal Smart Search & Organizer</h1>
+                    <p class="subtitle">Store Information and retrieve it later smartly</p>
+                </div>
+                <div class="header-stats" id="headerStats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalDocs">0</span>
+                        <span class="stat-label">Documents</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalFolders">0</span>
+                        <span class="stat-label">Folders</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="search-box">
+                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Search documents... (with autocomplete)"
+                            autocomplete="off"
+                        >
+                        <button id="searchBtn" class="search-btn">
+                            <span>Search</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="autocompleteResults" class="autocomplete-results"></div>
+                </div>
+                <div id="searchResults" class="search-results"></div>
+            </section>
+
+            <!-- Content Management Section -->
+            <section class="content-section">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="documents">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <span>Documents</span>
+                    </button>
+                    <button class="tab-btn" data-tab="create">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>Create</span>
+                    </button>
+                    <button class="tab-btn" data-tab="folders">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span>Folders</span>
+                    </button>
+                    <button class="tab-btn" data-tab="stats">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        <span>Statistics</span>
+                    </button>
+                </div>
+
+                <!-- Documents Tab -->
+                <div class="tab-content active" id="documentsTab">
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label>📁 Folder:</label>
+                            <select id="folderFilter" class="filter-select">
+                                <option value="">All folders</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>🏷️ Tags:</label>
+                            <select id="tagFilter" class="filter-select">
+                                <option value="">All tags</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>📊 Sort:</label>
+                            <select id="sortFilter" class="filter-select">
+                                <option value="recent">Most Recent</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="title">Title A-Z</option>
+                            </select>
+                        </div>
+                        <button id="clearFiltersBtn" class="clear-filters-btn">Clear Filters</button>
+                    </div>
+                    <div id="documentsList" class="documents-list"></div>
+                </div>
+                <br>
+
+                <h2 id="createSection">Create</h2>
+                <hr>
+                <!-- Create Tab -->
+                <div class="tab-content" id="createTab">
+                    <form id="createDocumentForm" class="document-form">
+                        <div class="form-group">
+                            <label for="docTitle">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+                                Title:
+                            </label>
+                            <input type="text" id="docTitle" required placeholder="Enter document title">
+                        </div>
+                        <div class="form-group">
+                            <label for="docBody">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                Content:
+                            </label>
+                            <textarea id="docBody" rows="8" required placeholder="Enter document content"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="docTags">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                        <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                                    </svg>
+                                    Tags:
+                                </label>
+                                <input type="text" id="docTags" placeholder="tag1, tag2, tag3">
+                            </div>
+                            <div class="form-group">
+                                <label for="docFolder">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                    Folder:
+                                </label>
+                                <input type="text" id="docFolder" value="/" placeholder="/">
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                            <span>Create Document</span>
+                        </button>
+                    </form>
+                </div>
+<br> <br>
+                <h2 id="foldersSection"> Folders </h2>
+                <hr>
+                <!-- Folders Tab -->
+                <div class="tab-content" id="foldersTab">
+                    <div class="folder-actions">
+                        <div class="input-group">
+                            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            <input type="text" id="newFolderPath" placeholder="Folder path (e.g., /work/projects)">
+                        </div>
+                        <button id="createFolderBtn" class="action-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span>Create Folder</span>
+                        </button>
+                    </div>
+                    <div id="foldersList" class="folders-list"></div>
+                </div>
+<br>
+                <h2 id="statsSection"> Statistics Tab </h2>
+                 <hr><br>
+                <div class="tab-content" id="statsTab">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📄</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="statTotalDocs">0</div>
+                                <div class="stat-text">Total Documents</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📁</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="statTotalFolders">0</div>
+                                <div class="stat-text">Total Folders</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🏷️</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="statTotalTags">0</div>
+                                <div class="stat-text">Unique Tags</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🔍</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="statCacheSize">0</div>
+                                <div class="stat-text">Cached Queries</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recent-section">
+                        <h3>📊 Recent Activity</h3>
+                        <div id="recentDocuments" class="recent-docs"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Document Detail/Edit Modal -->
+        <div id="documentModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Document Details</h2>
+                    <div class="modal-actions">
+                        <button id="editDocBtn" class="icon-btn" title="Edit">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                        <button id="deleteDocBtn" class="icon-btn delete-btn" title="Delete">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                        <span class="close">&times;</span>
+                    </div>
+                </div>
+                <div id="modalBody"></div>
+                <div id="modalEditForm" class="modal-edit-form" style="display: none;">
+                    <form id="editDocumentForm">
+                        <div class="form-group">
+                            <label>Title:</label>
+                            <input type="text" id="editDocTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Content:</label>
+                            <textarea id="editDocBody" rows="8" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Tags:</label>
+                            <input type="text" id="editDocTags" placeholder="tag1, tag2, tag3">
+                        </div>
+                        <div class="form-group">
+                            <label>Folder:</label>
+                            <input type="text" id="editDocFolder">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn">Save Changes</button>
+                            <button type="button" id="cancelEditBtn" class="cancel-btn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toastContainer" class="toast-container"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
